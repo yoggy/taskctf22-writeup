@@ -165,7 +165,7 @@ $ curl -s "http://34.82.208.2:31555/?q=%27+or+1%3D1+order+by+users.id+asc%3B+--"
   - <img src="images/fig04.png" width="240" height="auto">
 
 気を取り直して 116, 120, 116 って何の数字…と思って[ASCIIコード表](https://www.k-cube.co.jp/wakaba/server/ascii_code.html)を見る。
-どうも"TXTに相当するみたい。robots.txt…？
+どうも"TXT"に相当するみたい。robots.txt…？
 
 http://34.82.208.2:31481/robots.txt をブラウザで開いてみると、思いっきりflagがDisallowされてるっぽいされているみたい。
 
@@ -201,11 +201,17 @@ $ curl -s -H 'X-Forwarded-For: 127.0.0.1' "http://34.82.208.2:31481/admin/flag"
   - <img src="images/fig08.png" width="480" height="auto">
 
 とりあえず、detectedというファイルが何なのかを調べてみる。
-まずfileコマンドでファイルの種類を特定する。どうもLinux x86-64なバイナリの様子。
+まずfileコマンドでファイルの種類を特定する。どうもLinux x86-64な実行ファイルの様子。
 
   - <img src="images/fig08b.png" width="480" height="auto">
  
-次にstraceを使ってバイナリを雑に実行してみると、detectedは同じディレクトリにあるflag.txtファイルをオープンしようとしているみたい。
+次にstraceを使ってdetectedの挙動を調べてみる。
+
+```
+$ strace ./detected
+```
+
+detectedは同じディレクトリにあるflag.txtファイルをオープンしようとしているみたい。
 (OSが壊れても大丈夫な環境でファイルを実行しましょう…と思いつつ、雑に手元のLinux PCで実行)
 
   - <img src="images/fig09.png" width="640" height="auto">
@@ -223,7 +229,7 @@ detectedの動作はこんな感じということがわかった。
   - 同じディレクトリにあるflag.txtというファイルを読み込む
   - "flag: " + flag.txtファイルの内容を標準出力に出力する
 
-そこで、雑にgolangで↓のコードを書いて、コンパイル済みバイナリをアップしてみると…。
+そこで、雑にgolangで↓のコードを書いて、コンパイル済み実行ファイルをアップしてみると…。
 
 ```
 package main
@@ -243,13 +249,13 @@ func main() {
 }
 ```
 
-golangのバイナリは大きすぎるのか～～うける～～(ダメじゃん)
+golangの実行ファイルは大きすぎるのか～～うける～～(ダメじゃん)
 
   - <img src="images/fig12.png" width="480" height="auto">
 
-いまさらC言語で書くのはアレ(何)だし、何か楽する方法ないかな…と思っていると、detectedのバイナリはstripされていないことに気が付く。
+いまさらC言語で書くのはアレ(何)だし、何か楽する方法ないかな…？とか思っていると、detectedの実行ファイルはstripされていないことに気が付く。
 
-  - <img src="images/fig13.png" width="320" height="auto">
+  - <img src="images/fig13.png" width="640" height="auto">
 
 stripコマンドを使って余計な情報を削除した状態のdetectedをアップしてみたら、通ってしまったので回答おわり。
 
@@ -270,7 +276,8 @@ stripコマンドを使って余計な情報を削除した状態のdetectedを�
 >
 > [douro.jpeg](https://ctf.task4233.dev/files/15954ae01494aa42260a755ea2723ad0/douro.jpeg)
 
-OSINT問題は苦手なのですよね…と思いつつ、残っている問題はこの地点でdouro, kofun, shellgeiの3つだけなので、気を取り直してチャレンジしてみることに。
+OSINT問題は苦手なのですよね…と思いつつ、この地点で残っている問題はdouro, kofun, shellgeiの3つだけ。
+気を取り直してチャレンジしてみることに。
 
 画像右側に「Culve P～」の文字が光っている。これはCulver Park(公園)の看板だったりするのかな…？
 
@@ -330,7 +337,7 @@ OSINT問題は苦手なのですよね…と思いつつ、残っている問題
   - <img src="images/fig25.png" width="320" height="auto">
 
 「古墳群」という名前の通り、このエリアって古墳が100個以上あるのね！びっくり！
-そんなに遠くには行ってないでしょう…という予想と、OSINT苦手意識から、雑に「龍角寺n号墳」(n=1～140)をブルートフォースしてみる。全部はずれ！
+そんなに遠くには行ってないでしょう…という予想と、OSINT苦手意識から、雑に「龍角寺n号墳」(n=1～140ぐらい？)を人力ブルートフォースしてみる。全部はずれ！
 
   - <img src="images/fig26.png" width="320" height="auto">
 
