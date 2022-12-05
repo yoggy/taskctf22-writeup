@@ -104,7 +104,7 @@ $ python decrypt.py
 taskctf{x0r_1s_e4sy_70_1mplemen7}
 ```
 
-補足: MSYS2上で実行しました。ネイティブWindowsなPython3だとこのコードだとダメっぽい？
+補足: MSYS2上で実行しました。ネイティブWindowsなPython3だとこのコードではダメっぽい？
 
 # first
 > 運営している小さな掲示板が100ユーザを達成しました 🎉
