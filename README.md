@@ -1,7 +1,9 @@
 # taskctf22-writeup
+https://ctf.task4233.dev/
+
 息抜きで参加したら10位でした。せっかくなので、チュートリアル問題は抜き＆回答順に雑にWriteup。
 
-  - <img src="images/fig01.png" height="320">
+  - <img src="images/fig01.png" width="640" height="auto">
 
 # ramen
 >このラーメン屋の名前は何でしょう？
@@ -107,7 +109,7 @@ for key in range(0xffffffff):
 
 ブラウザでURLを開くと、掲示板っぽいWebアプリ。
 
-  - <img src="images/fig02.png" height="320">
+  - <img src="images/fig02.png" width="640" height="auto">
 
 
 files.zipに含まれているapp/app.pyの内容を見ると、SELECT文を実行しているところでSQLインジェクションが効くみたいな雰囲気。
@@ -156,22 +158,22 @@ $ curl -s "http://34.82.208.2:31555/?q=%27+or+1%3D1+order+by+users.id+asc%3B+--"
 
 ブラウザで開くと、jpegファイルが出てきた。これはステガノ問題…？
 
-  - <img src="images/fig03.png" height="320">
+  - <img src="images/fig03.png" width="240" height="auto">
 
 これはひょっとすると、(R,G,B)=(116,120,116)のピクセルだけ残すとflag文字列がうかびあがるとかなのかな…？と思ってopencv-pythonで抽出してみたけど、結果真っ黒。この方向じゃないみたい…。
 
-  - <img src="images/fig04.png" height="320">
+  - <img src="images/fig04.png" width="240" height="auto">
 
 気を取り直して 116, 120, 116 って何の数字…と思って[ASCIIコード表](https://www.k-cube.co.jp/wakaba/server/ascii_code.html)を見る。
 どうも"TXTに相当するみたい。robots.txt…？
 
 http://34.82.208.2:31481/robots.txt をブラウザで開いてみると、思いっきりflagがDisallowされてるっぽいされているみたい。
 
-  - <img src="images/fig05.png" height="320">
+  - <img src="images/fig05.png" width="640" height="auto">
 
 次に、http://34.82.208.2:31481/admin/flag を開いてみると、思いっきりアクセス制限に引っかかってしまう。
 
-  - <img src="images/fig06.png" height="320">
+  - <img src="images/fig06.png" width="640" height="auto">
 
 どうやったら接続元IPの偽装ができるのかな…？と思いながら、雑にリクエストヘッダにX-Forwarded-For:をつけて接続元を偽装することに成功して回答おわり。
 
@@ -192,29 +194,29 @@ $ curl -s -H 'X-Forwarded-For: 127.0.0.1' "http://34.82.208.2:31481/admin/flag"
 
 とりあえず、URLをブラウザで開いて、detectedをアップロードしてみると…
 
-  - <img src="images/fig07.png" height="320">
+  - <img src="images/fig07.png" width="480" height="auto">
 
 "this file is similar to the file in blacklisted"といわれて、拒否られるっぽい。
 
-  - <img src="images/fig08.png" height="320">
+  - <img src="images/fig08.png" width="480" height="auto">
 
 とりあえず、detectedというファイルが何なのかを調べてみる。
 まずfileコマンドでファイルの種類を特定する。どうもLinux x86-64なバイナリの様子。
 
-  - <img src="images/fig08b.png" height="320">
+  - <img src="images/fig08b.png" width="480" height="auto">
  
 次にstraceを使ってバイナリを雑に実行してみると、detectedは同じディレクトリにあるflag.txtファイルをオープンしようとしているみたい。
-(OSが壊れても大丈夫な環境でファイルを実行しましょう)
+(OSが壊れても大丈夫な環境でファイルを実行しましょう…と思いつつ、雑に手元のLinux PCで実行)
 
-  - <img src="images/fig09.png" height="320">
+  - <img src="images/fig09.png" width="640" height="auto">
 
 適当に echo "taskctf{aaaabbbbcccc}" > flag.txt でファイルを作ってもう一度実行してみると…
 
-  - <img src="images/fig10.png" height="320">
+  - <img src="images/fig10.png" width="640" height="auto">
 
 普通に実行するとこんな感じ。
 
-  - <img src="images/fig11.png" height="320">
+  - <img src="images/fig11.png" width="640" height="auto">
 
 detectedの動作はこんな感じということがわかった。
 
@@ -243,21 +245,21 @@ func main() {
 
 golangのバイナリは大きすぎるのか～～うける～～(ダメじゃん)
 
-  - <img src="images/fig12.png" height="320">
+  - <img src="images/fig12.png" width="480" height="auto">
 
 いまさらC言語で書くのはアレ(何)だし、何か楽する方法ないかな…と思っていると、detectedのバイナリはstripされていないことに気が付く。
 
-  - <img src="images/fig13.png" height="320">
+  - <img src="images/fig13.png" width="320" height="auto">
 
 stripコマンドを使って余計な情報を削除した状態のdetectedをアップしてみたら、通ってしまったので回答おわり。
 
-  - <img src="images/fig14.png" height="320">
+  - <img src="images/fig14.png" width="320" height="auto">
 
 ## 後日譚
-この問題、サーバの調子が悪いことが多くて、なんだかみんなあれこれ遊んでいるんだろうな…と思っていたけど、さっき見たらHTML書き換えられていますね。
+この問題、サーバの調子が悪いことが多くて、なんだかみんなあれこれ遊んでいるのかな…？と思っていたけど、さっき見たらHTML書き換わってますね。
 誕生日おめでとう！🎂
 
-  - <img src="images/fig15.png" height="320">
+  - <img src="images/fig15.png" width="480" height="auto">
 
 # douro
 >この写真が撮られた場所の緯度と経度を教えてください！
@@ -272,27 +274,27 @@ OSINT問題は苦手なのですよね…と思いつつ、残っている問題
 
 画像右側に「Culve P～」の文字が光っている。これはCulver Park(公園)の看板だったりするのかな…？
 
-  - <img src="images/fig16.png" height="320">
+  - <img src="images/fig16.png" width="320" height="auto">
 
 とりあえず「Culver Park」でググってみると、アメリカっぽい雰囲気？
 範囲が広すぎてよくわからん…。
 
-  - <img src="images/fig17.png" height="320">
+  - <img src="images/fig17.png" width="320" height="auto">
 
 困ったときのGoogle画像検索。場所はよくわからないけど、看板に文字が書いてあるっぽい…？
 
-  - <img src="images/fig18.png" height="320">
+  - <img src="images/fig18.png" width="320" height="auto">
 
 テキストをググってみると、画像左下のカンバンはこれっぽい↓
 
-  - <img src="images/fig19.png" height="320">
+  - <img src="images/fig19.png" width="320" height="auto">
   - https://www.facebook.com/jwithersIRWD/
 
 「Irvine Ranch Water District」を検索してみると、ロサンゼルス近郊みたい。
 
-  - <img src="images/fig20.png" height="320">
+  - <img src="images/fig20.png" width="320" height="auto">
 
-このあたりで「Culver Park」でググってみても、それっぽいとことが出てこない。うーん…
+このあたりで「Culver Park」でググってみても、それっぽい場所が出てこない。うーん…
 
 もう一度気を取り直して「Irvine Ranch Water District」の近くで「Culver」で検索してみると「Culver Drive」という道を発見。
 写真の道路の特徴としては…
@@ -304,7 +306,7 @@ OSINT問題は苦手なのですよね…と思いつつ、残っている問題
 
 …なので、Culver Drive沿いにペグマン(黄色い人)をドラッグ&ドロップしまくって探していたら…。
 
-  - <img src="images/fig21.png" height="320"> <img src="images/fig22.png" height="320"> <img src="images/fig23.png" height="320">
+  - <img src="images/fig21.png" width="320" height="auto"> <img src="images/fig22.png" width="320" height="auto"> <img src="images/fig23.png" width="320" height="auto">
 
 「Culver Plaza」だよ！てっきりParkかと思っていたから、ずいぶん時間がかかっちゃったよ…。
 
@@ -320,23 +322,23 @@ OSINT問題は苦手なのですよね…と思いつつ、残っている問題
 
 「作問者が訪れてSNSにもアップロード」ということなので、Twitterを探してみると、問題の写真以外にもう一つ写真が添付されているツイートを発見。
 
-  - <img src="images/fig24.png" height="320">
+  - <img src="images/fig24.png" width="320" height="auto">
   - https://twitter.com/task4233/status/1558826656151654400
 
 もう一つの写真をGoogle画像検索してみると、龍角寺古墳群ということがわかった。
 
-  - <img src="images/fig25.png" height="320">
+  - <img src="images/fig25.png" width="320" height="auto">
 
 「古墳群」という名前の通り、このエリアって古墳が100個以上あるのね！びっくり！
 そんなに遠くには行ってないでしょう…という予想と、OSINT苦手意識から、雑に「龍角寺n号墳」(n=1～140)をブルートフォースしてみる。全部はずれ！
 
-  - <img src="images/fig26.png" height="320">
+  - <img src="images/fig26.png" width="320" height="auto">
 
 気を取り直して「龍角寺古墳群」で画像検索していると…
 
-  - <img src="images/fig27.png" height="320"><img src="images/fig28.png" height="320"><img src="images/fig29.png" height="320">
+  - <img src="images/fig27.png" width="320" height="auto"><img src="images/fig28.png" width="320" height="auto"><img src="images/fig29.png" width="320" height="auto">
 
-http://haniwaproject.livedoor.blog/archives/cat_379104.html のサイトにある「上福田岩屋古墳」を回答しておわり。
+偶然見つけた http://haniwaproject.livedoor.blog/archives/cat_379104.html にあった「上福田岩屋古墳」を回答しておわり。
 
 # おわりに
 たのしいCTFをありがとう！
