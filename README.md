@@ -19,7 +19,7 @@ https://ctf.task4233.dev/
 >
 > [files.zip](https://ctf.task4233.dev/files/151dd5d09c6e36d2df04ed59ff8b2a60/files.zip)
 
-files.zipを展開するとhbd.shとtaskctf_flag.txt.encryptedいうファイルが入っている。
+files.zipを展開するとhbd.shとtaskctf_flag.txt.encryptedの2つのファイルが入っている。
 taskctf_flag.txt.encryptedが暗号化されてしまったデータ。
 
 hbd.shの中身を見てみると…
