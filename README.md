@@ -175,7 +175,7 @@ $ curl -s "http://34.82.208.2:31555/?q=%27+or+1%3D1+order+by+users.id+asc%3B+--"
 気を取り直して 116, 120, 116 って何の数字…と思って[ASCIIコード表](https://www.k-cube.co.jp/wakaba/server/ascii_code.html)を見る。
 どうも"TXT"に相当するみたい。robots.txt…？
 
-http://34.82.208.2:31481/robots.txt をブラウザで開いてみると、思いっきりflagがDisallowされてるっぽいされているみたい。
+http://34.82.208.2:31481/robots.txt をブラウザで開いてみると、思いっきりflagがDisallowされてるっぽい。
 
   - <img src="images/fig05.png" width="640" height="auto">
 
